@@ -24,6 +24,7 @@ def network(url):
     active = False
     global_ip = None
     private_ip = None
+    except_content = None
     try:
         temporal_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         temporal_socket.connect(("8.8.8.8", 80))
@@ -31,9 +32,9 @@ def network(url):
         temporal_socket.close()
         global_ip = requests.get(url, timeout=(3.0, 7.5)).text
         active = True
-    except ConnectionError:
-        pass
-    return active, global_ip, private_ip
+    except Exception as excep:
+        except_content= excep
+    return active, global_ip, private_ip, except_content
 
 def run_check() -> None:
     """チェックを実行する関数（起動時など）"""
@@ -56,11 +57,12 @@ def run_check() -> None:
     network_result = network("https://ifconfig.me")
     if not network_result[0]:
         print("Error")
-        except_print(network_result[1], "ネットワークに問題があります。", True)
+        except_print(network_result[3], "ネットワークに問題があります。", True)
     print("OK")
     print("Java Path", end="...")
     if not shutil.which('java'):
         print("Error")
         print("Javaのパス（環境変数）が通っていません。")
         sys.exit(1)
-    print("OK!")
+    print("OK")
+    print("All OK!\n")

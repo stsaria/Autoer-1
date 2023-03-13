@@ -8,8 +8,7 @@ class Autoer:
     def __init__(self) -> None:
         """起動に必要な準備"""
         check.run_check()
-
-        self.version = 0.2
+        self.version = 0.3
         self.editon = "alpha"
 
     def run_autoer(self):

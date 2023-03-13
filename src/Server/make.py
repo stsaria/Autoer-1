@@ -5,11 +5,12 @@ import datetime
 import urllib
 import shutil
 import sys
-from bs4 import BeautifulSoup
 import Etc.check as check
 import Etc.etc as etc
 import Server.control as control
 import os
+
+from bs4 import BeautifulSoup
 
 def get_minecraft_new_version(version):
     minecraft_server_donwload_page_url = "https://mcversions.net/download/"+str(version)
@@ -30,32 +31,6 @@ def get_minecraft_new_version(version):
 
 def download(url, save_name):
     urllib.request.urlretrieve(url, save_name)
-
-def setting_week_day_or_month(dt_now):
-    # 月をmatch.caseで設定する(3文字)
-    match dt_now.strftime('%m'):
-        case "01": month="Jan"
-        case "02": month="Feb"
-        case "03": month="Mar"
-        case "04": month="Apr"
-        case "05": month="May"
-        case "06": month="Jun"
-        case "07": month="Jul"
-        case "08": month="Aug"
-        case "09": month="Sep"
-        case "10": month="Oct"
-        case "11": month="Nov"
-        case "12": month="Dec"
-    # 曜日をmatch.caseで設定する(3文字)
-    match dt_now.weekday():
-        case 0: day_of_week="Sun"
-        case 1: day_of_week="Mon"
-        case 2: day_of_week="Tue"
-        case 3: day_of_week="Wed"
-        case 4: day_of_week="Thu"
-        case 5: day_of_week="Fri"
-        case 6: day_of_week="Sat"
-    return month,day_of_week
 
 def download_text(url, file_name):
     # そのままだとurllib.error.HTTPError: HTTP Error 403: Forbiddenでコケるからユーザーエージェントを偽装
@@ -184,7 +159,8 @@ def make_server():
         i = i + 1
         print("作成中 ("+str(i)+"回目)")
         
-        dt_now = datetime.datetime.now()
+        dt_now = datetime.datetime.now(datetime.timezone.utc)
+        dt_now_utc = datetime.datetime.now(datetime.timezone.utc)
         minecraft_dir = "minecraft/minecraft-"+dt_now.strftime('%Y-%m-%d-%H-%M-%S-%f')
         os.mkdir(minecraft_dir)
         
@@ -194,8 +170,6 @@ def make_server():
         local_jar_mode = int(linecache.getline("tmp/"+str(i)+".tmp", 4))
         jar_local_file = linecache.getline("tmp/"+str(i)+".tmp", 5).replace('\n', '')
         jar_installer_file = linecache.getline("tmp/"+str(i)+".tmp", 6).replace('\n', '')
-        
-        month, day_of_week = setting_week_day_or_month(dt_now)
         
         if not local_jar_mode == 0:
             
@@ -222,7 +196,7 @@ def make_server():
         
         # eula.txt create&write
         f = open(minecraft_dir+"/eula.txt", 'w')
-        f.write("#By changing the setting below to TRUE you are indicating your agreement to our EULA (https://account.mojang.com/documents/minecraft_eula).\n#"+day_of_week+" "+month+" "+dt_now.strftime('%d')+" "+dt_now.strftime('%H:%M:%S')+" "+str(dt_now.tzinfo)+" "+dt_now.strftime('%Y')+"\neula="+str(eula))
+        f.write("#By changing the setting below to TRUE you are indicating your agreement to our EULA (https://account.mojang.com/documents/minecraft_eula).\n#"+dt_now_utc.strftime('%a')+" "+dt_now_utc.strftime('%b')+" "+dt_now_utc.strftime('%d')+" "+dt_now_utc.strftime('%H:%M:%S')+" "+str(dt_now_utc.tzinfo)+" "+dt_now_utc.strftime('%Y')+"\neula="+str(eula))
         f.close()
         
         # server properties donwload
