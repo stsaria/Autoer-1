@@ -1,6 +1,7 @@
 import subprocess
 import linecache
 import sys
+
 from Server import make
 from Etc import etc
 from Etc import check
@@ -21,6 +22,9 @@ def select_server():
         print("txtファイルの行数が合わないため、続行できません。")
         sys.exit(1)
     while True:
+        with open("data/minecraft-list.txt", "r", encoding="utf-8") as file:
+            lines = file.read()
+        print(lines)
         choice_lines = input("サーバーの番号を入力してください: ")
         if not choice_lines or not choice_lines.isdigit():
             continue
@@ -33,11 +37,8 @@ def start_server():
     print("サーバー起動モード")
 
     print("起動するサーバーを選んでください\n")
-    # サーバー情報を読み込む
-    with open("data/minecraft-list.txt", "r", encoding="utf-8") as file:
-        lines = file.read()
-    print(lines)
-    choice_lines = select_server()
+    # サーバー情報を読み込み
+    choice_server = select_server()
     while True:
         choice_xms = input("Xms(サーバー最小割当メモリ)を入力してください(G) ※数字のみ: ")
         choice_xmx = input("Xmx(サーバー最大割当メモリ)を入力してください(G) ※数字のみ: ")
@@ -48,7 +49,7 @@ def start_server():
             if int(i) < 1:
                 continue
         break
-    path = linecache.getline('data/minecraft-dir-list.txt', int(choice_lines)).replace('\n', '')
+    path = linecache.getline('data/minecraft-dir-list.txt', int(choice_server)).replace('\n', '')
     start_jar = linecache.getline("data/"+path.replace('/', '-')+".txt", 2).replace('\n', '')
 
     exec_java(path, start_jar, mem_input[0], mem_input[1], "nogui")
@@ -57,11 +58,8 @@ def change_port():
     """サーバーのポートを再設定する関数"""
     print("サーバーポート変更モード")
     print("ポートを変更する、サーバーを選択してください。")
-    with open("data/minecraft-list.txt", "r", encoding="utf-8") as file:
-        lines = file.read()
-    print(lines)
-    choice_lines = select_server()
-    path = linecache.getline('data/minecraft-dir-list.txt', int(choice_lines)).replace('\n', '')
+    choice_server = select_server()
+    path = linecache.getline('data/minecraft-dir-list.txt', int(choice_server)).replace('\n', '')
     while True:
         input_port = input("変更するポートを入力してください: ")
         if not input_port or not str.isnumeric(input_port):
@@ -71,6 +69,20 @@ def change_port():
     make.file_identification_rewriting(path+"/server.properties",
                                         "server-port=", "server-port="+input_port+"\n")
     print("サーバーのポートを変更しました。")
+
+def change_max_player():
+    """サーバーの最大参加人数を変更する関数"""
+    print("最大参加人数の変更モード")
+    print("最大参加人数を変更したいサーバーを選択してください。")
+    choice_server = select_server()
+    while True:
+        input_max_player = input("変更したい最大参加人数を入力してください: ")
+        if not input_max_player.isdigit():
+            continue
+        break
+    path = linecache.getline('data/minecraft-dir-list.txt', int(choice_server)).replace('\n', '')
+    make.file_identification_rewriting(path+"/server.properties", "max-players=", "max-players="+input_max_player+"\n")
+    print("最大参加人数を変更しました。")
 
 def make_sh():
     """shとbatファイルを生成する関数"""
@@ -122,7 +134,8 @@ def control_server():
                         "サーバーポート変更モード[port]\n",
                         "shとbatファイル作成[sh],[bat]\n",
                         "ネットワークの情報確認モード[IP]\n",
-                        "戻る | Exit (exit)\n[R,P,S,B,N,E]: ", end="")
+                        "最大参加人数の変更モード[player],[max]\n",
+                        "戻る | Exit (exit)\n[R,P,S,B,N,P,M,E]: ", end="")
         choice = input().lower()
         if choice in ["run", "ru", "r"]:
             start_server()
@@ -134,6 +147,8 @@ def control_server():
             make_sh()
         elif choice in["network", "networ", "netwo", "netw", "net", "ne", "n"]:
             network_info()
+        elif choice in["player", "playe", "play", "pla", "pl", "p", "max", "ma", "m"]:
+            change_max_player()
         elif choice in["exit", "exi", "ex", "e"]:
             break
         else:
