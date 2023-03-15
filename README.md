@@ -11,7 +11,7 @@
 ・Gui (Graphical User Interface)版はありません。 Cui (Character User Interface) などのコンソールベースのプログラムです。
 
 ## 対応OS(オペレーションシステム)
-・オペレーションシステム：Windows10 / 11<br>
+・オペレーションシステム：Windows105t<br>
 　Linux(確認できたOS:Ubuntu/Debian)
 
 

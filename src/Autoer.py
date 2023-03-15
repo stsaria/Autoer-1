@@ -8,7 +8,7 @@ class Autoer:
     def __init__(self) -> None:
         """起動に必要な準備"""
         check.run_check()
-        self.version = 0.3
+        self.version = 0.5
         self.editon = "alpha"
 
     def run_autoer(self):
@@ -22,7 +22,6 @@ class Autoer:
                 control.control_server()
             elif mode in ["exit", "exi", "ex", "e"]:
                 sys.exit(0)
-
 
 if __name__ == "__main__":
     autoer = Autoer()
