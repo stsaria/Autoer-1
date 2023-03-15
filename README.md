@@ -1,7 +1,7 @@
 # Autoer-1
 
 <img alt="GitHub all releases" src="https://img.shields.io/github/downloads/stsaria/Autoer-1/total">
-<img alt="GitHub" src="https://img.shields.io/github/license/stsaria/Autoer-1">
+<img alt="GitHub license" src="https://img.shields.io/github/license/stsaria/Autoer-1">
 <img alt="GitHub repo size" src="https://img.shields.io/github/repo-size/stsaria/Autoer-1">
 
 
