@@ -10,6 +10,10 @@
 ・LinuxとWindowsに対応しています。（Macでの動作は保証できません。）<br>
 ・Gui (Graphical User Interface)版はありません。 Cui (Character User Interface) などのコンソールベースのプログラムです。
 
+## 制限
+・このプログラムを違法に使用しないでください。<br>
+・ライセンスはCreative Commons Zero v1.0 Universal です。(ただし、Version v0.6-beta以前のコード (v0.5-alphaなど.) はApache Licenseが適合となります。)
+
 ## 対応OS(オペレーションシステム)
 ・オペレーションシステム：Windows105t<br>
 　Linux(確認できたOS:Ubuntu/Debian)
@@ -23,6 +27,6 @@
 ## 使い方
 
 ・1: 設定したいマインクラフトサーバーのポートを開いてください。(例:25565/tcp)<br>
-・2: 公開しているPancakeの実行ファイルをダウンロードしてください。 Windowsでは.exe|Linuxは.exeがついていないファイルです。（配布場所: https://github.com/stsaria/Autoer-1/releases）
+・2: 公開しているPancakeの実行ファイルをダウンロードしてください。（配布場所: https://github.com/stsaria/Autoer-1/releases）
 ・3: ダウンロードしたファイルを実行してください。
 ・4: 案内に沿ってサーバーを作成・起動してください。

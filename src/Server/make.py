@@ -4,6 +4,7 @@ import requests
 import datetime
 import urllib
 import shutil
+import socket
 import sys
 import Etc.check as check
 import Etc.etc as etc
@@ -77,9 +78,18 @@ def input_server_info():
         if not server_port.isdigit():
             print("数字ではありません。")
             continue
-        if int(server_port) < 1 or int(server_port) > 49151:
+        if int(server_port) < 1 or int(server_port) > 100000:
             print("予想外のポートです。")
             continue
+        # 入力したポートが使用されているかのチェック
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        if sock.connect_ex(("127.0.0.1",int(server_port))) == 0:
+            print("注意：このポートは既に使用されています。",
+                    "\nそのまま使用すると、不都合が生じる可能性があります。",
+                    "\nこのポートでよろしいですか？\nはい[yes]\nいいえ[no] [Y/n]: ", end="")
+            choice = etc.input_yes_no("")
+            if not choice:
+                continue
         break
     while True:
         choice = input("もしあなたがマインクラフトサーバーでModやプラグイン \n(Mod: forge | プラグイン: spigotmc,papermc) を使いたい場合は`yes`を入力てください。 \nそうでない場合 (公式のサーバーをダウンロードする) は `no`を選択してください。\n[Y,N]: ").lower()

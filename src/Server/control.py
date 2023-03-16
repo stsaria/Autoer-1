@@ -2,6 +2,7 @@ import subprocess
 import linecache
 import platform
 import shutil
+import glob
 import time
 import sys
 import os
@@ -109,13 +110,13 @@ def add_startup():
         break
     if user_use_platfrom == "Windows":
         try:
-            file = open("C:/ProgramData/Microsoft/Windows/Start Menu/Programs/StartUp/minecraft-"+path.replace('/', '').replace('minecraft', '')+".bat", mode='w')
+            file = open("C:/ProgramData/Microsoft/Windows/Start Menu/Programs/StartUp/minecraft"+path.replace('/', '').replace('minecraft', '')+".bat", mode='w')
             file.write("java -Xms{xms}G -Xmx{xmx}G -jar {abspath}/{jar_file} nogui \n\
                         pause".format(xms = choice_xms, xmx = choice_xmx, abspath = absolute_path, jar_file = start_jar))
             file.close()
         except Exception as excep:
             check.except_print(excep, "", True)
-    else:
+    elif user_use_platfrom == "Linux":
         if not shutil.which('systemctl'):
             print("コマンド:Systemctlが見つかりません")
             sys.exit(4)
@@ -136,6 +137,29 @@ def add_startup():
             subprocess.run("sudo systemctl enable minecraft"+path.replace('/', '').replace('minecraft', ''), shell=True)
         except Exception as excep:
             check.except_print(excep, "", True)
+    print("完了しました！")
+
+def del_startup():
+    print("スタートアップ（自動起動設定）の削除")
+    check.is_admin()
+    print("設定したいサーバーを選択してください。")
+    user_use_platfrom = platform.system()
+    choice_server = select_server()
+    path = linecache.getline('data/minecraft-dir-list.txt', int(choice_server)).replace('\n', '')
+    if user_use_platfrom == "Windows":
+        try:
+            os.remove("C:/ProgramData/Microsoft/Windows/Start Menu/Programs/StartUp/minecraft"+path.replace('/', '').replace('minecraft', '')+".bat")
+        except Exception as excep:
+            check.except_print(excep, "", True)
+    elif user_use_platfrom == "Linux":
+        try:
+            if not shutil.which('systemctl'):
+                print("コマンド:Systemctlが見つかりません")
+                sys.exit(4)
+            os.remove("/etc/systemd/system/minecraft"+path.replace('/', '').replace('minecraft', '')+".service")
+            subprocess.run("sudo systemctl daemon-reload", shell=True)
+        except Exception as excep:
+            check.except_print(excep, "" , True)
     print("完了しました！")
 
 def make_sh():
@@ -186,8 +210,9 @@ def control_server():
                 "ネットワークの情報確認モード[network]\n",
                 "最大参加人数の変更モード,[max-player]\n",
                 "スタートアップ(Windows)、Systemd(*Linux)での自動起動の設定モード[add-startup]\n",
+                "スタートアップ(Windows)、Systemd(*Linux)での自動起動の解除モード[del-startup]\n",
                 "戻る | Exit (exit)\n",
-                "[R,P,S,B,N,M,A,E]: ", end="")
+                "[R,P,S,B,N,M,A,D,E]: ", end="")
         choice = input().lower()
         if choice in ["run", "ru", "r"]:
             start_server()
@@ -203,6 +228,8 @@ def control_server():
             change_max_player()
         elif choice in["add-startup", "add-startu", "add-start", "add-star", "add-sta", "add-st", "add-s", "add-", "add", "ad", "a"]:
             add_startup()
+        elif choice in["del-startup","del-startu","del-start","del-star","del-sta","del-st","del-s","del-","del","de","d"]:
+            del_startup()
         elif choice in["exit", "exi", "ex", "e"]:
             break
         else:

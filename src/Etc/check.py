@@ -8,6 +8,13 @@ import platform
 import ctypes
 # ※ユーザーはrequestsを入れる必要があります（もしくは、同梱されたソフトウェアを使う）
 
+def check_platform():
+    user_use_platform = platform.system()
+    if not user_use_platform in ["Windows", "Linux"]:
+        print("WindowsまたはLinux以外のOSを使用しています。\n続行できません。")
+        input()
+        sys.exit(1)
+
 def except_print(except_text, text, stop):
     """例外を表示する関数"""
     print("エラー(例外)が発生しました\n",text)
@@ -53,6 +60,7 @@ def network(url):
 
 def run_check() -> None:
     """チェックを実行する関数（起動時など）"""
+    check_platform()
     print("File", end="...")
     paths = ["data", "data/minecraft-list.txt", "data/minecraft-dir-list.txt", "minecraft"]
     attributes = ["dir", "file", "file", "dir"]
@@ -75,9 +83,9 @@ def run_check() -> None:
         except_print(network_result[3], "ネットワークに問題があります。", True)
     print("OK")
     print("Java Path", end="...")
-#    if not shutil.which('java'):
-#        print("Error")
-#        print("Javaのパス（環境変数）が通っていません。")
-#        sys.exit(1)
+    if not shutil.which('java'):
+        print("Error")
+        print("Javaのパス（環境変数）が通っていません。")
+        sys.exit(1)
     print("OK")
     print("All OK!\n")
