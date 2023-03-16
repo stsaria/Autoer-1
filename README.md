@@ -12,7 +12,7 @@
 
 ## 制限
 ・このプログラムを違法に使用しないでください。<br>
-・ライセンスはCreative Commons Zero v1.0 Universal です。(ただし、Version v0.6-beta以前のコード (v0.5-alphaなど.) はApache Licenseが適合となります。)
+・ライセンスはCreative Commons Zero v1.0 Universal です。(ただし、Version v0.6-beta以前のコード (v0.5-alphaなど.) は BSD-2 が適合となります。)
 
 ## 対応OS(オペレーションシステム)
 ・オペレーションシステム：Windows105t<br>
