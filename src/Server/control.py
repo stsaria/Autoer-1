@@ -143,24 +143,32 @@ def del_startup():
     print("スタートアップ（自動起動設定）の削除")
     check.is_admin()
     print("設定したいサーバーを選択してください。")
-    user_use_platfrom = platform.system()
-    choice_server = select_server()
-    path = linecache.getline('data/minecraft-dir-list.txt', int(choice_server)).replace('\n', '')
-    if user_use_platfrom == "Windows":
-        try:
-            os.remove("C:/ProgramData/Microsoft/Windows/Start Menu/Programs/StartUp/minecraft"+path.replace('/', '').replace('minecraft', '')+".bat")
-        except Exception as excep:
-            check.except_print(excep, "", True)
-    elif user_use_platfrom == "Linux":
-        try:
-            if not shutil.which('systemctl'):
-                print("コマンド:Systemctlが見つかりません")
-                sys.exit(4)
-            os.remove("/etc/systemd/system/minecraft"+path.replace('/', '').replace('minecraft', '')+".service")
-            subprocess.run("sudo systemctl daemon-reload", shell=True)
-        except Exception as excep:
-            check.except_print(excep, "" , True)
-    print("完了しました！")
+    while True:
+        user_use_platfrom = platform.system()
+        choice_server = select_server()
+        path = linecache.getline('data/minecraft-dir-list.txt', int(choice_server)).replace('\n', '')
+        windows_startup_path = "C:/ProgramData/Microsoft/Windows/Start Menu/Programs/StartUp/"
+        linux_startup_path = "/etc/systemd/system/"
+        if os.path.exists(linux_startup_path+"minecraft"+path.replace('/', '').replace('minecraft', '')+".service") or os.path.exists(windows_startup_path + "minecraft" + path.replace('/', '').replace('minecraft', '') + ".bat"):
+            if user_use_platfrom == "Windows":
+                try:
+                    os.remove(windows_startup_path+"minecraft"+path.replace('/', '').replace('minecraft', '')+".bat")
+                except Exception as excep:
+                    check.except_print(excep, "", True)
+            elif user_use_platfrom == "Linux":
+                try:
+                    if not shutil.which('systemctl'):
+                        print("コマンド:Systemctlが見つかりません")
+                        sys.exit(4)
+                    os.remove(linux_startup_path+"minecraft"+path.replace('/', '').replace('minecraft', '')+".service")
+                    subprocess.run("sudo systemctl daemon-reload", shell=True)
+                except Exception as excep:
+                    check.except_print(excep, "" , True)
+            print("完了しました！")
+        else:
+            print("その、サーバーは自動起動設定がされていません")
+            continue
+        break
 
 def make_sh():
     """shとbatファイルを生成する関数"""

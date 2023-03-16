@@ -6,6 +6,8 @@ import socket
 import requests
 import platform
 import ctypes
+
+from Etc import etc
 # ※ユーザーはrequestsを入れる必要があります（もしくは、同梱されたソフトウェアを使う）
 
 def check_platform():
@@ -19,14 +21,13 @@ def except_print(except_text, text, stop):
     """例外を表示する関数"""
     print("エラー(例外)が発生しました\n",text)
     while True:
-        except_choice = input("\n例外を表示しますか？ \nはい[YES]\nいいえ[No]\n[Y/n]:").lower()
-        if except_choice in ["yes", "ye", "y"]:
+        except_choice = etc.input_yes_no("\n例外を表示しますか？ \nはい[YES]\nいいえ[No]\n[Y/n]: ")
+        if except_choice:
             print("詳細------\n",except_text)
-            break
-        if except_choice in ["no", "n"]:
-            break
+        break
     if stop:
-        input()
+        if except_choice:
+            input()
         sys.exit(1)
 
 def is_admin():

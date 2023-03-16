@@ -3,13 +3,15 @@ from Etc import check
 from Server import make
 from Server import control
 
+# Sorry, this code isn't pretty.
+
 class Autoer:
     """実行メインクラス"""
     def __init__(self) -> None:
         """起動に必要な準備"""
         check.run_check()
         self.version = 0.6
-        self.editon = "beta"
+        self.editon = "beta.2"
     
     def run_autoer(self):
         """Autoerを実行する"""
