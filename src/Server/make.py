@@ -1,6 +1,5 @@
 from urllib.request import Request, urlopen
 import linecache
-import requests
 import datetime
 import urllib
 import shutil
