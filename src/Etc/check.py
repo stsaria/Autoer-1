@@ -7,6 +7,8 @@ import requests
 import platform
 import ctypes
 
+from Server import make
+
 from Etc import etc
 # ※ユーザーはrequestsを入れる必要があります（もしくは、同梱されたソフトウェアを使う）
 
@@ -89,4 +91,13 @@ def run_check() -> None:
         print("Javaのパス（環境変数）が通っていません。")
         sys.exit(1)
     print("OK")
+    # Download Json in MCversions
+    print("Jsonファイルをダウンロードしています", end="...")
+    try:
+        make.download_text("https://mcversions.net/mcversions.json", "data/version.json")
+    except Exception as excep:
+        print("Error")
+        except_print(excep, "", True)
+    print("OK")
+
     print("All OK!\n")
