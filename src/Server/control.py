@@ -2,7 +2,6 @@ import subprocess
 import linecache
 import platform
 import shutil
-import glob
 import time
 import sys
 import os
@@ -14,7 +13,7 @@ def exec_java(dir_name, jar_name, xms, xmx, java_argument):
     """javaを実行するための関数"""
     # もし入力内容が0かnotだったら1(1GB)に
     cmd = "java -Xmx"+xmx+"G -Xms"+xms+"G -jar ./"+jar_name+" "+java_argument
-    subprocess.call(cmd, shell=True, cwd=r""+dir_name+"/")
+    subprocess.call(cmd, shell=True, cwd=dir_name+"/")
 
 def select_server():
     """サーバーを選択する関数"""
@@ -54,7 +53,13 @@ def start_server():
         break
     path = linecache.getline('data/minecraft-dir-list.txt', int(choice_server)).replace('\n', '')
     start_jar = linecache.getline("data/"+path.replace('/', '-')+".txt", 2).replace('\n', '')
-
+    print(start_jar)
+    if not os.path.exists(path+"/"+start_jar):
+        if os.path.exists(path+"/"+start_jar.replace(".jar", "")+"-universal.jar"):
+            start_jar = start_jar.replace(".jar", "")+"-universal.jar"
+        else:
+            print("起動できません。\nJarファイルが存在しません。")
+            sys.exit(6)
     exec_java(path, start_jar, mem_input[0], mem_input[1], "nogui")
 
 def change_port():

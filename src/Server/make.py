@@ -190,6 +190,7 @@ def make_server():
             
             if local_jar_mode == 2:
                 shutil.copy(jar_installer_file, minecraft_dir)
+                jar_installer_file = os.path.basename(jar_installer_file)
                 jar_start_file = jar_installer_file.replace('-installer', '')
                 server_version = os.path.splitext(os.path.basename(jar_start_file))[0]
                 control.exec_java(minecraft_dir, jar_installer_file, "1", "1", "--installServer")
