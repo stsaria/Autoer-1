@@ -4,6 +4,8 @@ from Server import make
 from Server import control
 
 # Sorry, this code isn't pretty.
+# this code -> ptrsie#0952
+# email -> solothunder.autoer@gmail.com
 
 class Autoer:
     """実行メインクラス"""
