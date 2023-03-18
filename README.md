@@ -1,9 +1,6 @@
 # Autoer-1
 
-<img alt="GitHub tag (latest SemVer pre-release)" src="https://img.shields.io/github/v/tag/stsaria/Autoer-1?include_prereleases">
-<img alt="GitHub all releases" src="https://img.shields.io/github/downloads/stsaria/Autoer-1/total">
-<img alt="GitHub license" src="https://img.shields.io/github/license/stsaria/Autoer-1">
-<img alt="GitHub repo size" src="https://img.shields.io/github/repo-size/stsaria/Autoer-1">
+<img alt="GitHub tag (latest SemVer pre-release)" src="https://img.shields.io/github/v/tag/stsaria/Autoer-1?include_prereleases" style="display: flex;">　<img alt="GitHub all releases" src="https://img.shields.io/github/downloads/stsaria/Autoer-1/total" style="display: flex;">　<img alt="GitHub license" src="https://img.shields.io/github/license/stsaria/Autoer-1" style="display: flex;">　<img alt="GitHub repo size" src="https://img.shields.io/github/repo-size/stsaria/Autoer-1" style="display: flex;">
 
 
 ## 概要
