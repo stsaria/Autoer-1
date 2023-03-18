@@ -5,30 +5,28 @@ import datetime
 import urllib
 import shutil
 import socket
-import sys
-import Etc.check as check
-import Etc.etc as etc
-import Server.control as control
+import json
 import os
 
-from bs4 import BeautifulSoup
+import Server.control as control
+import Etc.check as check
+import Etc.etc as etc
 
-def get_minecraft_new_version(version):
-    minecraft_server_donwload_page_url = "https://mcversions.net/download/"+str(version)
-    try:
-        res = requests.get(minecraft_server_donwload_page_url)
-        res.raise_for_status()
-    except Exception as e:
-        return False, str(res).replace('<Response [', '').replace(']>', '')
-    html = requests.get(minecraft_server_donwload_page_url)
-    soup = BeautifulSoup(html.content, "html.parser")
-    div = soup.find('div', 'downloads block lg:flex lg:mt-0 p-8 md:p-12 md:pr-0 lg:col-start-1')
-    if div:
-        minecraft_server_donwload_page_a = soup.find('a', 'text-xs whitespace-nowrap py-3 px-8 bg-green-700 hover:bg-green-900 rounded text-white no-underline font-bold transition-colors duration-200')
-        if minecraft_server_donwload_page_a:
-            return True, minecraft_server_donwload_page_a.get('href')
-        else:
-            return False, "not"
+def get_minecraft_version(version):
+    file = open('data/version.json', 'r')
+    json_object = json.load(file)
+    minecraft_editions = ["stable", "snapshot"]
+    successs = []
+    for minecraft_edition in minecraft_editions:
+        try:
+            minecraft_server_url = json_object[minecraft_edition][version]["server"]
+            successs.append(True)
+        except KeyError:
+            successs.append(False)
+            continue
+    if not successs[0] and not successs[1]:
+        return False, "not"
+    return True, minecraft_server_url
 
 def download(url, save_name):
     urllib.request.urlretrieve(url, save_name)
@@ -139,7 +137,7 @@ def input_server_info():
             local_jar_mode = 0
             while True:
                 version = input("サーバーのバージョンを入力してください: ")
-                if not get_minecraft_new_version(version)[0]:
+                if not get_minecraft_version(version)[0]:
                     continue
                 break
             break
@@ -198,7 +196,7 @@ def make_server():
             try:
                 print("Version "+server_version+" をダウンロードしています。")
                 # マイクラjarファイルダウンロード
-                download(get_minecraft_new_version(server_version)[1], minecraft_dir+"/server.jar")
+                download(get_minecraft_version(server_version)[1], minecraft_dir+"/server.jar")
                 jar_start_file = "server.jar"
             # ダウンロード時の例外処理
             except Exception as e:
