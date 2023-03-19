@@ -5,6 +5,7 @@ import urllib
 import shutil
 import socket
 import json
+import re
 import os
 
 import Server.control as control
@@ -89,7 +90,7 @@ def input_server_info():
                 continue
         break
     while True:
-        choice = input("もしあなたがマインクラフトサーバーでModやプラグイン \n(Mod: forge | プラグイン: spigotmc,papermc) を使いたい場合は`yes`を入力てください。 \nそうでない場合 (公式のサーバーをダウンロードする) は `no`を選択してください。\n[Y,N]: ").lower()
+        choice = input("もしあなたがマインクラフトサーバーでModやプラグイン \n(Mod: forge | プラグイン: spigotmc,papermc) を使いたい場合は`yes`を入力てください。 \nそうでない場合 (公式のサーバーをダウンロードする) は `no`を選択してください。\n※ただしｍ※\n[Y,N]: ").lower()
         if choice in ["yes", "ye", "y"]:
             version = None
             while True:
@@ -138,6 +139,9 @@ def input_server_info():
                 version = input("サーバーのバージョンを入力してください: ")
                 if not get_minecraft_version(version)[0]:
                     continue
+                if not check.minecraft_to_support_list(version):
+                    if not etc.input_yes_no("いま、あなたが入力したバージョンに合うJavaが見つかりません。\nそのまま続行すると、不都合が生じる可能性があります。\n続行しますか？\nはい[yes]\nいいえ[no] [Y/n]: "):
+                        continue
                 break
             break
     while True:

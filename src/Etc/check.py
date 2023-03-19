@@ -7,11 +7,26 @@ import socket
 import ctypes
 import requests
 import platform
+import subprocess
 
 from Server import make
 
 from Etc import etc
 # ※ユーザーはrequestsを入れる必要があります（もしくは、同梱されたソフトウェアを使う）
+
+def minecraft_to_support_list(minecraft_version):
+    java_version_base = java_version()[1]
+    minecraft_version_two_base = str(re.search(r'\d+', minecraft_version[2:]).group())
+    support = False
+    if 1 <= int(minecraft_version_two_base) <= 6 and int(java_version_base) == 8:
+        support = True
+    if  7 <= int(minecraft_version_two_base) <= 16 and 8 <= int(java_version_base) <= 11 and not 9 <= int(java_version_base) <= 10:
+        support = True
+    if int(minecraft_version_two_base) == 17 and int(java_version_base) == 16:
+        support = True
+    if 18 <= int(minecraft_version_two_base) <= 99 and int(java_version_base) == 17:
+        support = True
+    return support
 
 def check_platform():
     user_use_platform = platform.system()
@@ -46,7 +61,8 @@ def is_admin():
         sys.exit(3)
 
 def java_version():
-    java_version = str(re.findall('".+"', 'openjdk version "11.0.16.1" 2022-08-12 LTS')).replace('"', '').replace("'", "").replace('[', '').replace(']', '')
+    java_version = str(re.findall('".+"', str(subprocess.run('java -version', capture_output=True, text=True).stderr))).replace('"', '').replace("'", "").replace('[', '').replace(']', '')
+    
     java_version_base = str(re.search(r'\d+', java_version).group())
     if java_version[:3] == "1.8":
         java_version_base = "8"
