@@ -90,7 +90,7 @@ def input_server_info():
                 continue
         break
     while True:
-        choice = input("もしあなたがマインクラフトサーバーでModやプラグイン \n(Mod: forge | プラグイン: spigotmc,papermc) を使いたい場合は`yes`を入力てください。 \nそうでない場合 (公式のサーバーをダウンロードする) は `no`を選択してください。\n※ただしｍ※\n[Y,N]: ").lower()
+        choice = input("もしあなたがマインクラフトサーバーでModやプラグイン \n(Mod: forge | プラグイン: spigotmc,papermc) を使いたい場合は`yes`を入力てください。 \nそうでない場合 (公式のサーバーをダウンロードする) は `no`を選択してください。\n※ただし、自分のJarファイルを使うモードでのトラブルに関しては答えることはできません。※\n[Y,N]: ").lower()
         if choice in ["yes", "ye", "y"]:
             version = None
             while True:

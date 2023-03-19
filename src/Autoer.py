@@ -13,7 +13,7 @@ class Autoer:
         """起動に必要な準備"""
         check.run_check()
         self.version = 0.9
-        self.editon = "beta.2"
+        self.editon = "beta.3"
     
     def run_autoer(self):
         """Autoerを実行する"""
