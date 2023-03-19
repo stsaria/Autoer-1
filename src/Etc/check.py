@@ -1,11 +1,12 @@
 """モジュールの読み込み"""
 import os
+import re
 import sys
 import shutil
 import socket
+import ctypes
 import requests
 import platform
-import ctypes
 
 from Server import make
 
@@ -43,6 +44,13 @@ def is_admin():
     if not is_admin:
         print("管理者権限で実行してください。")
         sys.exit(3)
+
+def java_version():
+    java_version = str(re.findall('".+"', 'openjdk version "11.0.16.1" 2022-08-12 LTS')).replace('"', '').replace("'", "").replace('[', '').replace(']', '')
+    java_version_base = str(re.search(r'\d+', java_version).group())
+    if java_version[:3] == "1.8":
+        java_version_base = "8"
+    return java_version, java_version_base
 
 def network(url):
     """ネットワークのチェック関数（グローバル、プライベート IPも取得可能）"""
@@ -92,12 +100,14 @@ def run_check() -> None:
         sys.exit(1)
     print("OK")
     # Download Json in MCversions
-    print("Jsonファイルをダウンロードしています", end="...")
-    try:
-        make.download_text("https://mcversions.net/mcversions.json", "data/version.json")
-    except Exception as excep:
-        print("Error")
-        except_print(excep, "", True)
-    print("OK")
+    if not os.path.exists("data/version.json"):
+        print("Jsonファイルをダウンロードしています", end="...")
+        try:
+            make.download_text("https://mcversions.net/mcversions.json", "data/version.json")
+        except Exception as excep:
+            print("Error")
+            except_print(excep, "", True)
+        print("OK")
 
+    print("Javaのバージョンは "+java_version()[1]+" です。")
     print("All OK!\n")
