@@ -1,4 +1,6 @@
 import sys
+
+"""自作プログラムの読み込み"""
 from Etc import check
 from Server import make
 from Server import control
@@ -12,10 +14,12 @@ class Autoer:
     def __init__(self) -> None:
         """起動に必要な準備"""
         check.run_check()
-        self.version = 0.9
-        self.editon = "beta.3"
+        self.version = 1.0
+        self.editon = "pre-release"
     
     def run_autoer(self):
+        if self.editon == "pre-release":
+            print("*このプログラムは、リリース前最終確認版です*")
         """Autoerを実行する"""
         print("Autoer-1\nVersion: "+str(self.version)+"-"+self.editon)
         while True:

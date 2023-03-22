@@ -5,7 +5,10 @@ import shutil
 import time
 import sys
 import os
+
+"""自作プログラムの読み込み"""
 from Server import make
+from Server import proxy as proxy_program
 from Etc import etc
 from Etc import check
 
@@ -199,6 +202,23 @@ def make_sh():
                     " -jar "+start_jar+" --nogui", file=file,  sep='')
     print("sh-batファイルを作成しました。")
 
+def proxy():
+    print("サーバープロキシモード")
+    local_host = "127.0.0.1"
+    while True:
+        local_port = input("出力するポートを入力してください: ")
+        if not local_port.isdigit():
+            continue
+        break
+    remote_host = input("元のサーバーのホスト名を入力してください: ")
+    while True:
+        remote_port = input("元のサーバーのポート番号を入力してください: ")
+        if not remote_port.isdigit():
+            continue
+        break
+    proxy_program.server_loop(local_host, int(local_port), remote_host, int(remote_port))
+    print("接続が切断されました")
+
 def network_info():
     """ネットワークのIPなどを確認できる関数"""
     print("\n注意: IPを公開するのは、危険度が高いです。\n",
@@ -218,18 +238,19 @@ def control_server():
     while True:
         print("\nモードを選択してください。\n",
                 "サーバー起動モード[run]\n",
-                "サーバーポート変更モード[port]\n",
+                "サーバーポート変更モード[change-port]\n",
                 "shとbatファイル作成[sh],[bat]\n",
                 "ネットワークの情報確認モード[network]\n",
                 "最大参加人数の変更モード,[max-player]\n",
                 "スタートアップ(Windows)、Systemd(*Linux)での自動起動の設定モード[add-startup]\n",
                 "スタートアップ(Windows)、Systemd(*Linux)での自動起動の解除モード[del-startup]\n",
+                "プロキシモード（テスト版）[proxy]\n",
                 "戻る | Exit (exit)\n",
-                "[R,P,S,B,N,M,A,D,E]: ", end="")
+                "[R,C-P,S,B,N,M,A,D,P,E]: ", end="")
         choice = input().lower()
         if choice in ["run", "ru", "r"]:
             start_server()
-        elif choice in["port", "por", "po", "p"]:
+        elif choice in["c", "ch", "cha", "chan", "chang","change", "change-", "change-p", "change-po", "change-por", "change-port", "port"]:
             change_port()
         elif choice in["sh", "s"]:
             make_sh()
@@ -243,6 +264,8 @@ def control_server():
             add_startup()
         elif choice in["del-startup","del-startu","del-start","del-star","del-sta","del-st","del-s","del-","del","de","d"]:
             del_startup()
+        elif choice in ["proxy", "prox", "pro", "pr", "p"]:
+            proxy()
         elif choice in["exit", "exi", "ex", "e"]:
             break
         else:

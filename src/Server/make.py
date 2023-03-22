@@ -5,9 +5,9 @@ import urllib
 import shutil
 import socket
 import json
-import re
 import os
 
+"""自作プログラムの読み込み"""
 import Server.control as control
 import Etc.check as check
 import Etc.etc as etc
@@ -76,7 +76,7 @@ def input_server_info():
         if not server_port.isdigit():
             print("数字ではありません。")
             continue
-        if int(server_port) < 1 or int(server_port) > 100000:
+        if int(server_port) < 1 or int(server_port) > 50000:
             print("予想外のポートです。")
             continue
         # 入力したポートが使用されているかのチェック
@@ -170,16 +170,16 @@ def make_server():
         i = i + 1
         print("作成中 ("+str(i)+"回目)")
         
-        dt_now = datetime.datetime.now(datetime.timezone.utc)
-        dt_now_utc = datetime.datetime.now(datetime.timezone.utc)
+        dt_now        = datetime.datetime.now()
+        dt_now_utc    = datetime.datetime.now(datetime.timezone.utc)
         minecraft_dir = "minecraft/minecraft-"+dt_now.strftime('%Y-%m-%d-%H-%M-%S-%f')
         os.mkdir(minecraft_dir)
         
-        server_name = linecache.getline("tmp/"+str(i)+".tmp", 1).replace('\n', '')
-        server_version = linecache.getline("tmp/"+str(i)+".tmp", 2).replace('\n', '')
-        server_port = linecache.getline("tmp/"+str(i)+".tmp", 3).replace('\n', '')
-        local_jar_mode = int(linecache.getline("tmp/"+str(i)+".tmp", 4))
-        jar_local_file = linecache.getline("tmp/"+str(i)+".tmp", 5).replace('\n', '')
+        server_name        = linecache.getline("tmp/"+str(i)+".tmp", 1).replace('\n', '')
+        server_version     = linecache.getline("tmp/"+str(i)+".tmp", 2).replace('\n', '')
+        server_port        = linecache.getline("tmp/"+str(i)+".tmp", 3).replace('\n', '')
+        local_jar_mode     = int(linecache.getline("tmp/"+str(i)+".tmp", 4))
+        jar_local_file     = linecache.getline("tmp/"+str(i)+".tmp", 5).replace('\n', '')
         jar_installer_file = linecache.getline("tmp/"+str(i)+".tmp", 6).replace('\n', '')
         
         if not local_jar_mode == 0:

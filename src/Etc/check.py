@@ -9,9 +9,10 @@ import requests
 import platform
 import subprocess
 
+"""自作プログラムの読み込み"""
 from Server import make
-
 from Etc import etc
+
 # ※ユーザーはrequestsを入れる必要があります（もしくは、同梱されたソフトウェアを使う）
 
 def minecraft_to_support_list(minecraft_version):
@@ -61,7 +62,8 @@ def is_admin():
         sys.exit(3)
 
 def java_version():
-    java_version = str(re.findall('".+"', str(subprocess.run('java -version', capture_output=True, text=True).stderr))).replace('"', '').replace("'", "").replace('[', '').replace(']', '')
+    java_version = str(re.findall('".+"',
+                                    str(subprocess.run('java -version', capture_output=True, text=True).stderr))).replace('"', '').replace("'", "").replace('[', '').replace(']', '')
     
     java_version_base = str(re.search(r'\d+', java_version).group())
     if java_version[:3] == "1.8":
@@ -117,7 +119,7 @@ def run_check() -> None:
     print("OK")
     # Download Json in MCversions
     if not os.path.exists("data/version.json"):
-        print("Jsonファイルをダウンロードしています", end="...")
+        print("Download to Json", end="...")
         try:
             make.download_text("https://mcversions.net/mcversions.json", "data/version.json")
         except Exception as excep:

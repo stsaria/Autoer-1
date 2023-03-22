@@ -13,7 +13,7 @@
 ・ライセンスはCreative Commons Zero v1.0 Universal です。(ただし、Version v0.6-beta以前のコード (v0.5-alphaなど.) は BSD-2 が適合となります。)
 
 ## 対応OS(オペレーションシステム)
-・オペレーションシステム：Windows105t<br>
+・オペレーションシステム：Windows10<br>
 　Linux(確認できたOS:Ubuntu/Debian)
 
 
