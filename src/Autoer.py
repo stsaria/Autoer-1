@@ -15,7 +15,7 @@ class Autoer:
         """起動に必要な準備"""
         check.run_check()
         self.version = 1.0
-        self.editon = "pre-release"
+        self.editon = "release"
     
     def run_autoer(self):
         if self.editon == "pre-release":
