@@ -14,12 +14,15 @@ class Autoer:
     """実行メインクラス"""
     def __init__(self) -> None:
         """起動に必要な準備"""
-        check.run_check()
-        if 5 <= len(sys.argv) <= 6:
+        ischeck = True
+        if 2 <= len(sys.argv):
             try:
+                if "-notcheck" in sys.argv:
+                    ischeck = False
                 if sys.argv[1] == "-make":
                     make.make_server(sys.argv[2], sys.argv[3], sys.argv[4], int(0), "", "", bool(sys.argv[5]))
                     print("Make Success")
+                    sys.exit(0)
                 elif sys.argv[1] == "-run":
                     java_argv = "nogui"
                     # Minecraft Server select code
@@ -30,7 +33,7 @@ class Autoer:
                         minecraft_dir_list =  f.readlines()
                         minecraft_dir_list_strip = [line.strip() for line in minecraft_dir_list]
                         path = [line for line in minecraft_dir_list_strip if sys.argv[2] in line][0]
-                    # xmx,xms check
+                    # xmx,xms isnum?
                     if not sys.argv[3].isdigit() or not sys.argv[4].isdigit():
                         print("メモリの指定方法が想定外です。")
                         sys.exit(5)
@@ -38,11 +41,15 @@ class Autoer:
                         java_argv = sys.argv[5]
                     start_jar = linecache.getline("data/"+path.replace('/', '-')+".txt", 2).replace('\n', '')
                     control.exec_java(path, start_jar, sys.argv[3], sys.argv[4], java_argument=java_argv)
-                sys.exit(0)
+                    sys.exit(0)
+                else:
+                    pass
             except Exception as e:
                 check.except_print(e, "", True)
+        if ischeck:
+            check.run_check()
         self.version = 1.2
-        self.editon = "pre-release"
+        self.editon = "release"
     
     def run_autoer(self):
         if self.editon == "pre-release":
