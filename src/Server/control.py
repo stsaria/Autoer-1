@@ -12,7 +12,7 @@ from Server import proxy as proxy_program
 from Etc import etc
 from Etc import check
 
-def exec_java(dir_name, jar_name, xms, xmx, java_argument):
+def exec_java(dir_name, jar_name, xms, xmx, java_argument=""):
     """javaを実行するための関数"""
     # もし入力内容が0かnotだったら1(1GB)に
     cmd = "java -Xmx"+xmx+"G -Xms"+xms+"G -jar ./"+jar_name+" "+java_argument
@@ -63,7 +63,7 @@ def start_server():
         else:
             print("起動できません。\nJarファイルが存在しません。")
             sys.exit(6)
-    exec_java(path, start_jar, mem_input[0], mem_input[1], "nogui")
+    exec_java(path, start_jar, mem_input[0], mem_input[1], java_argument="nogui")
 
 def change_port():
     """サーバーのポートを再設定する関数"""

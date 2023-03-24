@@ -168,7 +168,7 @@ def make_server(server_name, server_version, server_port, local_jar_mode, jar_lo
             jar_installer_file = os.path.basename(jar_installer_file)
             jar_start_file = jar_installer_file.replace('-installer', '')
             server_version = os.path.splitext(os.path.basename(jar_start_file))[0]
-            control.exec_java(minecraft_dir, jar_installer_file, "1", "1", "--installServer")
+            control.exec_java(minecraft_dir, jar_installer_file, "1", "1", java_argument="--installServer")
     else:
         try:
             # マイクラjarファイルダウンロード

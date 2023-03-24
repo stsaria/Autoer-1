@@ -44,7 +44,6 @@ def proxy_handler(client_socket, remote_host, remote_port, receive_first):
             print('ログ：リモートに送信されます')
         remote_buffer = received_from(remote_socket)
         if len(remote_buffer):
-            print('[<==] Received {} bytes from remote.'.format(len(remote_buffer)))
             hexdump(remote_buffer)
             client_socket.send(remote_buffer)
             print('ログ：localhostに送信されます')

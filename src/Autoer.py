@@ -1,3 +1,4 @@
+import linecache
 import sys
 
 """自作プログラムの読み込み"""
@@ -14,16 +15,34 @@ class Autoer:
     def __init__(self) -> None:
         """起動に必要な準備"""
         check.run_check()
-
-        if len(sys.argv) >= 5:
+        if 5 <= len(sys.argv) <= 6:
             try:
-                make.make_server(sys.argv[1], sys.argv[2], sys.argv[3], int(0), "", "", bool(sys.argv[4]))
-                print("Make Success")
+                if sys.argv[1] == "-make":
+                    make.make_server(sys.argv[2], sys.argv[3], sys.argv[4], int(0), "", "", bool(sys.argv[5]))
+                    print("Make Success")
+                elif sys.argv[1] == "-run":
+                    java_argv = "nogui"
+                    # Minecraft Server select code
+                    if sys.argv[2].isdigit():
+                        path = linecache.getline('data/minecraft-dir-list.txt', int(sys.argv[2])).replace('\n', '')
+                    else:
+                        f = open('data/minecraft-dir-list.txt')
+                        minecraft_dir_list =  f.readlines()
+                        minecraft_dir_list_strip = [line.strip() for line in minecraft_dir_list]
+                        path = [line for line in minecraft_dir_list_strip if sys.argv[2] in line][0]
+                    # xmx,xms check
+                    if not sys.argv[3].isdigit() or not sys.argv[4].isdigit():
+                        print("メモリの指定方法が想定外です。")
+                        sys.exit(5)
+                    if len(sys.argv) == 6:
+                        java_argv = sys.argv[5]
+                    start_jar = linecache.getline("data/"+path.replace('/', '-')+".txt", 2).replace('\n', '')
+                    control.exec_java(path, start_jar, sys.argv[3], sys.argv[4], java_argument=java_argv)
                 sys.exit(0)
             except Exception as e:
                 check.except_print(e, "", True)
-        self.version = 1.1
-        self.editon = "release"
+        self.version = 1.2
+        self.editon = "pre-release"
     
     def run_autoer(self):
         if self.editon == "pre-release":
