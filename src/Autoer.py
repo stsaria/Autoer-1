@@ -23,7 +23,7 @@ class Autoer:
             except Exception as e:
                 check.except_print(e, "", True)
         self.version = 1.1
-        self.editon = "pre-release"
+        self.editon = "release"
     
     def run_autoer(self):
         if self.editon == "pre-release":

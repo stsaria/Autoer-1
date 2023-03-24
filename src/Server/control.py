@@ -145,6 +145,9 @@ def add_startup():
             subprocess.run("sudo systemctl enable minecraft"+path.replace('/', '').replace('minecraft', ''), shell=True)
         except Exception as excep:
             check.except_print(excep, "", True)
+    else:
+        print("その、OSは対応していません")
+        sys.exit(6)
     print("完了しました！")
 
 def del_startup():
