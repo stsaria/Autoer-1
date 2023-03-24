@@ -5,6 +5,7 @@ import urllib
 import shutil
 import socket
 import json
+import sys
 import os
 
 """自作プログラムの読み込み"""
@@ -151,7 +152,55 @@ def input_server_info():
         elif choice in ["plural", "plura", "plur", "plu", "pl", "p"]:
             return False, server_name, version, server_port, local_jar_mode, jar_installer_file, jar_start_file
 
-def make_server():
+def make_server(server_name, server_version, server_port, local_jar_mode, jar_local_file, jar_installer_file, eula):
+    dt_now        = datetime.datetime.now()
+    dt_now_utc    = datetime.datetime.now(datetime.timezone.utc)
+    minecraft_dir = "minecraft/minecraft-"+dt_now.strftime('%Y-%m-%d-%H-%M-%S-%f')
+    os.mkdir(minecraft_dir)
+    if not local_jar_mode == 0:
+        if local_jar_mode == 1:
+            server_version = os.path.splitext(os.path.basename(jar_local_file))[0]
+            shutil.copy(jar_local_file, minecraft_dir)
+            jar_start_file = "server.jar"
+        
+        if local_jar_mode == 2:
+            shutil.copy(jar_installer_file, minecraft_dir)
+            jar_installer_file = os.path.basename(jar_installer_file)
+            jar_start_file = jar_installer_file.replace('-installer', '')
+            server_version = os.path.splitext(os.path.basename(jar_start_file))[0]
+            control.exec_java(minecraft_dir, jar_installer_file, "1", "1", "--installServer")
+    else:
+        try:
+            # マイクラjarファイルダウンロード
+            download(get_minecraft_version(server_version)[1], minecraft_dir+"/server.jar")
+            jar_start_file = "server.jar"
+        # ダウンロード時の例外処理
+        except Exception as e:
+            check.except_print(e, "", True)
+    # eula.txt create&write
+    f = open(minecraft_dir+"/eula.txt", 'w')
+    f.write("#By changing the setting below to TRUE you are indicating your agreement to our EULA (https://account.mojang.com/documents/minecraft_eula).\n#"+dt_now_utc.strftime('%a')+" "+dt_now_utc.strftime('%b')+" "+dt_now_utc.strftime('%d')+" "+dt_now_utc.strftime('%H:%M:%S')+" "+str(dt_now_utc.tzinfo)+" "+dt_now_utc.strftime('%Y')+"\neula="+str(eula))
+    f.close()
+    
+    # server properties donwload
+    download_text("https://server.properties/", minecraft_dir+"/server.properties")
+    # server properties edit port
+    file_identification_rewriting(minecraft_dir+"/server.properties", "server-port=", "server-port="+server_port+"\n")
+    # server properties edit motd(server name)
+    file_identification_rewriting(minecraft_dir+"/server.properties", "motd=", "motd="+server_name+"\n")
+    
+    server_list_lines_count = sum([1 for _ in open('data/minecraft-list.txt', encoding="utf-8")])
+    with open('data/minecraft-list.txt', 'a', encoding="utf-8") as f:
+        print("["+str(server_list_lines_count + 1)+"] Server name: "+server_name+" | Creation time: "+dt_now.strftime('%Y/%m/%d %H:%M:%S')[:-3]+" | Server Version: "+server_version+" | Minecraft Server Directory: "+minecraft_dir+"/", file=f)
+    with open('data/minecraft-dir-list.txt', 'a', encoding="utf-8") as f:
+        print(minecraft_dir, file=f)
+    
+    # サーバーディレクトリに管理用txtファイルを作成
+    with open("data/"+minecraft_dir.replace('/', '-')+".txt", 'w', encoding="UTF-8") as f:
+        print(server_version+"\n"+jar_start_file, file=f)
+
+# サーバー作成のウィザード
+def wizard_make_server():
     print("Make Mode")
     server_count = 1
     while True:
@@ -170,64 +219,22 @@ def make_server():
         i = i + 1
         print("作成中 ("+str(i)+"回目)")
         
-        dt_now        = datetime.datetime.now()
-        dt_now_utc    = datetime.datetime.now(datetime.timezone.utc)
-        minecraft_dir = "minecraft/minecraft-"+dt_now.strftime('%Y-%m-%d-%H-%M-%S-%f')
-        os.mkdir(minecraft_dir)
-        
         server_name        = linecache.getline("tmp/"+str(i)+".tmp", 1).replace('\n', '')
         server_version     = linecache.getline("tmp/"+str(i)+".tmp", 2).replace('\n', '')
         server_port        = linecache.getline("tmp/"+str(i)+".tmp", 3).replace('\n', '')
         local_jar_mode     = int(linecache.getline("tmp/"+str(i)+".tmp", 4))
         jar_local_file     = linecache.getline("tmp/"+str(i)+".tmp", 5).replace('\n', '')
         jar_installer_file = linecache.getline("tmp/"+str(i)+".tmp", 6).replace('\n', '')
-        
-        if not local_jar_mode == 0:
-            
-            if local_jar_mode == 1:
-                server_version = os.path.splitext(os.path.basename(jar_local_file))[0]
-                shutil.copy(jar_local_file, minecraft_dir)
-                jar_start_file = "server.jar"
-            
-            if local_jar_mode == 2:
-                shutil.copy(jar_installer_file, minecraft_dir)
-                jar_installer_file = os.path.basename(jar_installer_file)
-                jar_start_file = jar_installer_file.replace('-installer', '')
-                server_version = os.path.splitext(os.path.basename(jar_start_file))[0]
-                control.exec_java(minecraft_dir, jar_installer_file, "1", "1", "--installServer")
-        else:
-            try:
-                print("Version "+server_version+" をダウンロードしています。")
-                # マイクラjarファイルダウンロード
-                download(get_minecraft_version(server_version)[1], minecraft_dir+"/server.jar")
-                jar_start_file = "server.jar"
-            # ダウンロード時の例外処理
-            except Exception as e:
-                check.except_print(e, "", True)
-        
-        
-        # eula.txt create&write
-        f = open(minecraft_dir+"/eula.txt", 'w')
-        f.write("#By changing the setting below to TRUE you are indicating your agreement to our EULA (https://account.mojang.com/documents/minecraft_eula).\n#"+dt_now_utc.strftime('%a')+" "+dt_now_utc.strftime('%b')+" "+dt_now_utc.strftime('%d')+" "+dt_now_utc.strftime('%H:%M:%S')+" "+str(dt_now_utc.tzinfo)+" "+dt_now_utc.strftime('%Y')+"\neula="+str(eula))
-        f.close()
-        
-        # server properties donwload
-        download_text("https://server.properties/", minecraft_dir+"/server.properties")
-        # server properties edit port
-        file_identification_rewriting(minecraft_dir+"/server.properties", "server-port=", "server-port="+server_port+"\n")
-        # server properties edit motd(server name)
-        file_identification_rewriting(minecraft_dir+"/server.properties", "motd=", "motd="+server_name+"\n")
-        
-        server_list_lines_count = sum([1 for _ in open('data/minecraft-list.txt', encoding="utf-8")])
-        with open('data/minecraft-list.txt', 'a', encoding="utf-8") as f:
-            print("["+str(server_list_lines_count + 1)+"] Server name: "+server_name+" | Creation time: "+dt_now.strftime('%Y/%m/%d %H:%M:%S')[:-3]+" | Server Version: "+server_version+" | Minecraft Server Directory: "+minecraft_dir+"/", file=f)
-        with open('data/minecraft-dir-list.txt', 'a', encoding="utf-8") as f:
-            print(minecraft_dir, file=f)
-        
-        # サーバーディレクトリに管理用txtファイルを作成
-        with open("data/"+minecraft_dir.replace('/', '-')+".txt", 'w', encoding="UTF-8") as f:
-            print(server_version+"\n"+jar_start_file, file=f)
-
+        try:
+            make_server(server_name, server_version, server_port, local_jar_mode, jar_local_file, jar_installer_file, eula)
+        except Exception as e:
+            check.except_print(e, "", True)
     # Remove directory temp
     shutil.rmtree("tmp")
     print("\nサーバーの作成が完了しました！\n")
+
+if __name__ == "__main__":
+    try:
+        make_server(sys.argv[1], sys.argv[2], sys.argv[3], int(0), "", "", bool(sys.argv[4]))
+    except Exception as e:
+        check.except_print(e, "", True)
