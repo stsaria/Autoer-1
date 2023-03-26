@@ -63,7 +63,7 @@ def is_admin():
 
 def java_version():
     java_version = str(re.findall('".+"',
-                                    str(subprocess.run('java -version', capture_output=True, text=True).stderr))).replace('"', '').replace("'", "").replace('[', '').replace(']', '')
+                                    str(subprocess.run('java -version', capture_output=True, text=True, shell="True").stderr))).replace('"', '').replace("'", "").replace('[', '').replace(']', '')
     
     java_version_base = str(re.search(r'\d+', java_version).group())
     if java_version[:3] == "1.8":

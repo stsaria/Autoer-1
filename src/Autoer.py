@@ -1,4 +1,5 @@
 import linecache
+import json
 import sys
 
 """自作プログラムの読み込み"""
@@ -12,6 +13,19 @@ from Server import control
 
 class Autoer:
     """実行メインクラス"""
+    def is_version_new_autoer(self, use_version):
+        """実行されたAutoerのバージョンが一番新しいか確認する関数"""
+        version = ""
+        make.download_text("https://api.github.com/repos/stsaria/Autoer-1/tags", "data/autoer.json")
+        for i in range(open("data/autoer.json").readline().count('name')):
+            if json.load(open('data/autoer.json', 'r'))[i]['name'] in ["pre"]:
+                continue
+            version = json.load(open('data/autoer.json', 'r'))[i]['name'].replace('v', '').replace('.', '').replace('-', '').replace('release', '').replace('beta', '').replace('pre', '').replace('alpha', '')[:2]
+            if int(str(use_version).replace('.', '')) < int(version):
+                return False
+            else:
+                return True
+
     def __init__(self) -> None:
         """起動に必要な準備"""
         ischeck = True
@@ -48,8 +62,10 @@ class Autoer:
                 check.except_print(e, "", True)
         if ischeck:
             check.run_check()
-        self.version = 1.2
-        self.editon = "release"
+        self.version = 1.3
+        self.editon = "pre-release"
+        if not self.is_version_new_autoer(str(self.version)):
+            print("I:すでにこのバージョンよりも新しい、バージョンが出ています。\nくわしくは: https://github.com/stsaria/Autoer-1/releases\n")
     
     def run_autoer(self):
         if self.editon == "pre-release":
@@ -66,5 +82,8 @@ class Autoer:
                 sys.exit(0)
 
 if __name__ == "__main__":
-    autoer = Autoer()
-    autoer.run_autoer()
+    #try:
+        autoer = Autoer()
+        autoer.run_autoer()
+    # except Exception as e:
+    #    check.except_print(e, "", True)

@@ -39,7 +39,7 @@ def download_text(url, file_name):
     html = urlopen(request).read()
     html = html.decode('utf-8')
     # ファイル書き込み(server.properties)
-    file = open(file_name, mode='w')
+    file = open(file_name, mode='w', newline='\n')
     file.write(str(html))
     file.close()
 
