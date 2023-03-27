@@ -38,12 +38,26 @@
 （ただし、この引数は他の引き数にかぶらなければ、どこにおいても問題なし）
 ```
 ### ・作成する場合
+#### コマンド
 ```
 [hoge@cp1 ~]$ ./Autoer -make [server_name] [server_version] [server_port] [eula(True, False)]
+```
+※ ただし、このモードで作成する場合は forgeやpapermc,spigotmc などには対応していません。
+### ・作成する場合（ファイルで複数作成）
+#### ファイル
+// text.txt
+```
+[server_name] [server_version] [server_port] [eula(True, False)]
+```
+（改行で区切れば、**1コマンド**で複数作成することができます。）
+#### コマンド
+```
+[hoge@cp1 ~]$ ./Autoer -make -file [file_name]
 ```
 このように引数を与えさせます。<br>
 ※ ただし、このモードで作成する場合は forgeやpapermc,spigotmc などには対応していません。
 ### ・実行する場合
+#### コマンド
 ```
 [hoge@cp1 ~]$ ./Autoer -control [server_name(例: minecraft-2023-03-25-02-09-50-927255 例2(サーバー番号): 1)] [server_xms] [server_xmx] [java_argument(任意)]
 ```
