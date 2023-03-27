@@ -46,10 +46,30 @@ class Autoer:
                             sys.exit(4)
                         lines = open(sys.argv[3], encoding="utf-8", mode="r").readlines()
                         for i in range(len(lines)):
+                            installer_jar = ""
+                            spigot_jar = ""
                             argv = lines[i].split(' ')
-                            print(str(i)+"番目のサーバー名は |||↓\n"+make.make_server(argv[0], argv[1], argv[2], int(0), "", "", bool(strtobool(argv[3].capitalize().replace('\n', '')))))
+                            if "-spigot" in argv:
+                                local_jar_mode = 1
+                                spigot_jar = argv[1]
+                            elif "-mod" in argv:
+                                local_jar_mode = 2
+                                installer_jar = argv[1]
+                            else:
+                                local_jar_mode = 0
+                            print(str(i)+"番目のサーバー名は |||↓\n"+make.make_server(argv[0], argv[1], argv[2], local_jar_mode, spigot_jar, installer_jar, bool(strtobool(argv[3].capitalize().replace('\n', '')))))
                     else:
-                        print("作成したサーバー名は |||↓\n"+make.make_server(sys.argv[2], sys.argv[3], sys.argv[4], int(0), "", "", bool(strtobool(sys.argv[5].capitalize()))))
+                        installer_jar = ""
+                        spigot_jar = ""
+                        if "-spigot" in sys.argv:
+                            local_jar_mode = 1
+                            spigot_jar = sys.argv[3]
+                        elif "-mod" in sys.argv:
+                            local_jar_mode = 2
+                            installer_jar = sys.argv[3]
+                        else:
+                            local_jar_mode = 0
+                        print("作成したサーバー名は |||↓\n"+make.make_server(sys.argv[2], sys.argv[3], sys.argv[4], local_jar_mode, spigot_jar, installer_jar, bool(strtobool(sys.argv[5].capitalize()))))
                     print("Make Success")
                     sys.exit(0)
                 elif sys.argv[1] == "-run":
@@ -69,6 +89,12 @@ class Autoer:
                     if len(sys.argv) == 6:
                         java_argv = sys.argv[5]
                     start_jar = linecache.getline("data/"+path.replace('/', '-')+".txt", 2).replace('\n', '')
+                    if not os.path.exists(path+"/"+start_jar):
+                        if os.path.exists(path+"/"+start_jar.replace(".jar", "")+"-universal.jar"):
+                            start_jar = start_jar.replace(".jar", "")+"-universal.jar"
+                        else:
+                            print("起動できません。\nJarファイルが存在しません。")
+                            sys.exit(6)
                     control.exec_java(path, start_jar, sys.argv[3], sys.argv[4], java_argument=java_argv)
                     sys.exit(0)
                 else:
@@ -77,8 +103,8 @@ class Autoer:
                 check.except_print(e, "", True)
         if ischeck:
             check.run_check()
-        self.version = 1.3
-        self.editon = "release"
+        self.version = 1.4
+        self.editon = "pre-release"
         if not self.is_version_new_autoer(str(self.version)):
             print("I:すでにこのバージョンよりも新しい、バージョンが出ています。\nくわしくは: https://github.com/stsaria/Autoer-1/releases\n")
     

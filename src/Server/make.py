@@ -157,7 +157,7 @@ def make_server(server_name, server_version, server_port, local_jar_mode, jar_lo
     if not local_jar_mode == 0:
         if local_jar_mode == 1:
             server_version = os.path.splitext(os.path.basename(jar_local_file))[0]
-            shutil.copy(jar_local_file, minecraft_dir)
+            shutil.copyfile(jar_local_file, minecraft_dir+"/server.jar")
             jar_start_file = "server.jar"
         if local_jar_mode == 2:
             shutil.copy(jar_installer_file, minecraft_dir)

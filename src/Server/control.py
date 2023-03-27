@@ -56,7 +56,6 @@ def start_server():
         break
     path = linecache.getline('data/minecraft-dir-list.txt', int(choice_server)).replace('\n', '')
     start_jar = linecache.getline("data/"+path.replace('/', '-')+".txt", 2).replace('\n', '')
-    print(start_jar)
     if not os.path.exists(path+"/"+start_jar):
         if os.path.exists(path+"/"+start_jar.replace(".jar", "")+"-universal.jar"):
             start_jar = start_jar.replace(".jar", "")+"-universal.jar"
