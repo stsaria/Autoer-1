@@ -1,6 +1,7 @@
 import linecache
 import json
 import sys
+import os
 
 """自作プログラムの読み込み"""
 from Etc import check
@@ -10,6 +11,12 @@ from Server import control
 # Sorry, this code isn't pretty.
 # this code -> ptrsie#0952
 # email -> solothunder.autoer@gmail.com
+
+def strtobool(str: str):
+    if str.lower() in ["true", "tru", "tr", "t"]:
+        return 1
+    elif str.lower() in ["false", "fals", "fal", "fa", "f"]:
+        return 0
 
 class Autoer:
     """実行メインクラス"""
@@ -25,7 +32,6 @@ class Autoer:
                 return False
             else:
                 return True
-
     def __init__(self) -> None:
         """起動に必要な準備"""
         ischeck = True
@@ -34,7 +40,16 @@ class Autoer:
                 if "-notcheck" in sys.argv:
                     ischeck = False
                 if sys.argv[1] == "-make":
-                    make.make_server(sys.argv[2], sys.argv[3], sys.argv[4], int(0), "", "", bool(sys.argv[5]))
+                    if sys.argv[2] == "-file":
+                        if not os.path.isfile(sys.argv[3]):
+                            print("そのファイルは存在しません")
+                            sys.exit(4)
+                        lines = open(sys.argv[3], encoding="utf-8", mode="r").readlines()
+                        for i in range(len(lines)):
+                            argv = lines[i].split(' ')
+                            print(str(i)+"番目のサーバー名は |||↓\n"+make.make_server(argv[0], argv[1], argv[2], int(0), "", "", bool(strtobool(argv[3].capitalize().replace('\n', '')))))
+                    else:
+                        print("作成したサーバー名は |||↓\n"+make.make_server(sys.argv[2], sys.argv[3], sys.argv[4], int(0), "", "", bool(strtobool(sys.argv[5].capitalize()))))
                     print("Make Success")
                     sys.exit(0)
                 elif sys.argv[1] == "-run":
@@ -63,7 +78,7 @@ class Autoer:
         if ischeck:
             check.run_check()
         self.version = 1.3
-        self.editon = "pre-release"
+        self.editon = "release"
         if not self.is_version_new_autoer(str(self.version)):
             print("I:すでにこのバージョンよりも新しい、バージョンが出ています。\nくわしくは: https://github.com/stsaria/Autoer-1/releases\n")
     
@@ -82,8 +97,8 @@ class Autoer:
                 sys.exit(0)
 
 if __name__ == "__main__":
-    #try:
+    try:
         autoer = Autoer()
         autoer.run_autoer()
-    # except Exception as e:
-    #    check.except_print(e, "", True)
+    except Exception as e:
+        check.except_print(e, "", True)

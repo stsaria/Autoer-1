@@ -46,7 +46,6 @@ def download_text(url, file_name):
 # 特定の文字列の行を書き換える関数
 def replace_func(fname, replace_set):
     target, replace = replace_set
-    
     with open(fname, 'r') as f1:
         tmp_list =[]
         for row in f1:
@@ -54,7 +53,6 @@ def replace_func(fname, replace_set):
                 tmp_list.append(replace)
             else:
                 tmp_list.append(row)
-
     with open(fname, 'w') as f2:
         for i in range(len(tmp_list)):
             f2.write(tmp_list[i])
@@ -131,7 +129,6 @@ def input_server_info():
                         break
                 break
             break
-        
         elif choice in ["no", "n"]:
             jar_installer_file = None
             jar_start_file = None
@@ -162,7 +159,6 @@ def make_server(server_name, server_version, server_port, local_jar_mode, jar_lo
             server_version = os.path.splitext(os.path.basename(jar_local_file))[0]
             shutil.copy(jar_local_file, minecraft_dir)
             jar_start_file = "server.jar"
-        
         if local_jar_mode == 2:
             shutil.copy(jar_installer_file, minecraft_dir)
             jar_installer_file = os.path.basename(jar_installer_file)
@@ -181,7 +177,6 @@ def make_server(server_name, server_version, server_port, local_jar_mode, jar_lo
     f = open(minecraft_dir+"/eula.txt", 'w')
     f.write("#By changing the setting below to TRUE you are indicating your agreement to our EULA (https://account.mojang.com/documents/minecraft_eula).\n#"+dt_now_utc.strftime('%a')+" "+dt_now_utc.strftime('%b')+" "+dt_now_utc.strftime('%d')+" "+dt_now_utc.strftime('%H:%M:%S')+" "+str(dt_now_utc.tzinfo)+" "+dt_now_utc.strftime('%Y')+"\neula="+str(eula))
     f.close()
-    
     # server properties donwload
     download_text("https://server.properties/", minecraft_dir+"/server.properties")
     # server properties edit port
@@ -198,6 +193,7 @@ def make_server(server_name, server_version, server_port, local_jar_mode, jar_lo
     # サーバーディレクトリに管理用txtファイルを作成
     with open("data/"+minecraft_dir.replace('/', '-')+".txt", 'w', encoding="UTF-8") as f:
         print(server_version+"\n"+jar_start_file, file=f)
+    return str(minecraft_dir).replace('minecraft/', '')
 
 # サーバー作成のウィザード
 def wizard_make_server():
@@ -217,8 +213,7 @@ def wizard_make_server():
     
     for i in range(server_count):
         i = i + 1
-        print("作成中 ("+str(i)+"回目)")
-        
+        print("作成中 ("+str(i)+"回目)")        
         server_name        = linecache.getline("tmp/"+str(i)+".tmp", 1).replace('\n', '')
         server_version     = linecache.getline("tmp/"+str(i)+".tmp", 2).replace('\n', '')
         server_port        = linecache.getline("tmp/"+str(i)+".tmp", 3).replace('\n', '')
