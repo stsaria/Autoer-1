@@ -115,7 +115,7 @@ def input_server_info():
                     local_jar_mode = 1
                     while True:
                         jar_installer_file = None
-                        jar_start_file = input("自分が持っているJarファイル名を入力してください。 (e.g. C:/Users/user/Download/spigotmc.jar): ")
+                        jar_start_file = input("自分が持っているJarファイル名を入力してください。(ただし、BuildToolsなどで、すでにマインクラフトを\n実行できる状態のJarファイルのみです。) (e.g. C:/Users/user/Download/spigotmc.jar): ")
                         try:
                             if not os.path.isfile(jar_start_file):
                                 print("ファイルがありません。")
@@ -150,12 +150,14 @@ def input_server_info():
             return False, server_name, version, server_port, local_jar_mode, jar_installer_file, jar_start_file
 
 def make_server(server_name, server_version, server_port, local_jar_mode, jar_local_file, jar_installer_file, eula):
+    result = False
     dt_now        = datetime.datetime.now()
     dt_now_utc    = datetime.datetime.now(datetime.timezone.utc)
     minecraft_dir = "minecraft/minecraft-"+dt_now.strftime('%Y-%m-%d-%H-%M-%S-%f')
     os.mkdir(minecraft_dir)
     if not local_jar_mode == 0:
         if local_jar_mode == 1:
+            result = True
             server_version = os.path.splitext(os.path.basename(jar_local_file))[0]
             shutil.copyfile(jar_local_file, minecraft_dir+"/server.jar")
             jar_start_file = "server.jar"
@@ -165,8 +167,17 @@ def make_server(server_name, server_version, server_port, local_jar_mode, jar_lo
             jar_start_file = jar_installer_file.replace('-installer', '')
             server_version = os.path.splitext(os.path.basename(jar_start_file))[0]
             control.exec_java(minecraft_dir, jar_installer_file, "1", "1", java_argument="--installServer")
+            if os.path.isfile(minecraft_dir+"/"+jar_installer_file+".log"):
+                file_readlines = open(minecraft_dir+"/"+jar_installer_file+".log", 'r').readlines()
+                for i in file_readlines[-5:]:
+                    if "success" in i:
+                        result = True
+                        break
+            else:
+                result = True
     else:
         try:
+            result = True
             # マイクラjarファイルダウンロード
             download(get_minecraft_version(server_version)[1], minecraft_dir+"/server.jar")
             jar_start_file = "server.jar"
@@ -183,7 +194,6 @@ def make_server(server_name, server_version, server_port, local_jar_mode, jar_lo
     file_identification_rewriting(minecraft_dir+"/server.properties", "server-port=", "server-port="+server_port+"\n")
     # server properties edit motd(server name)
     file_identification_rewriting(minecraft_dir+"/server.properties", "motd=", "motd="+server_name+"\n")
-    
     server_list_lines_count = sum([1 for _ in open('data/minecraft-list.txt', encoding="utf-8")])
     with open('data/minecraft-list.txt', 'a', encoding="utf-8") as f:
         print("["+str(server_list_lines_count + 1)+"] Server name: "+server_name+" | Creation time: "+dt_now.strftime('%Y/%m/%d %H:%M:%S')[:-3]+" | Server Version: "+server_version+" | Minecraft Server Directory: "+minecraft_dir+"/", file=f)
@@ -193,7 +203,7 @@ def make_server(server_name, server_version, server_port, local_jar_mode, jar_lo
     # サーバーディレクトリに管理用txtファイルを作成
     with open("data/"+minecraft_dir.replace('/', '-')+".txt", 'w', encoding="UTF-8") as f:
         print(server_version+"\n"+jar_start_file, file=f)
-    return str(minecraft_dir).replace('minecraft/', '')
+    return str(minecraft_dir).replace('minecraft/', ''), result
 
 # サーバー作成のウィザード
 def wizard_make_server():
@@ -221,12 +231,15 @@ def wizard_make_server():
         jar_local_file     = linecache.getline("tmp/"+str(i)+".tmp", 5).replace('\n', '')
         jar_installer_file = linecache.getline("tmp/"+str(i)+".tmp", 6).replace('\n', '')
         try:
-            make_server(server_name, server_version, server_port, local_jar_mode, jar_local_file, jar_installer_file, eula)
+            result = make_server(server_name, server_version, server_port, local_jar_mode, jar_local_file, jar_installer_file, eula)[1]
         except Exception as e:
             check.except_print(e, "", True)
     # Remove directory temp
     shutil.rmtree("tmp")
-    print("\nサーバーの作成が完了しました！\n")
+    if result:
+        print("\nサーバーの作成が完了しました！\n")
+    else:
+        print("正常に作成できませんでした。\nもう一度作成することをおすすめします。")
 
 if __name__ == "__main__":
     try:

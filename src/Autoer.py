@@ -1,4 +1,5 @@
 import linecache
+import shutil
 import json
 import sys
 import os
@@ -39,6 +40,32 @@ class Autoer:
             try:
                 if "-notcheck" in sys.argv:
                     ischeck = False
+                else:
+                    check.run_check(False)
+                if "-spigot-build" in sys.argv:
+                    result = False
+                    version = str(sys.argv[sys.argv.index('-spigot-build')+1])
+                    make.download("https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar", "Spigot-BuildTools.jar")
+                    if not check.minecraft_to_support_list(version):
+                        print("あなたのJavaのバージョンは、インストールする'Minecraft'のバージョンに対応していません。")
+                        sys.exit(6)
+                    control.exec_java("./", "Spigot-BuildTools.jar", "1", "1", java_argument="-rev "+version)
+                    remove_files = ["Spigot", "CraftBukkit", "work", "Bukkit", "BuildData", "apache-maven-3.6.0"]
+                    for remove_file in remove_files:
+                        shutil.rmtree("./"+remove_file)
+                    if os.path.isfile("./BuildTools.log.txt"):
+                        file_readlines = open("/BuildTools.log.txt", 'r').readlines()
+                        for i in file_readlines[-5:]:
+                            if "success" in i.lower():
+                                result = True
+                            break
+                    os.remove("BuildTools.log.txt")
+                    print("作成したJarファイルは、spigot-"+version+".jar です\n※注意: ただし、サーバーを今すぐ起動できるまでは準備されていません\n")
+                    if result:
+                        print("\n正常に完了しました。！\n")
+                    else:
+                        print("正常に完了できませんでした。\nもう一度実行することをおすすめします。\n終了する場合はctrl+c")
+                        input()
                 if sys.argv[1] == "-make":
                     if sys.argv[2] == "-file":
                         if not os.path.isfile(sys.argv[3]):
@@ -57,7 +84,8 @@ class Autoer:
                                 installer_jar = argv[1]
                             else:
                                 local_jar_mode = 0
-                            print(str(i)+"番目のサーバー名は |||↓\n"+make.make_server(argv[0], argv[1], argv[2], local_jar_mode, spigot_jar, installer_jar, bool(strtobool(argv[3].capitalize().replace('\n', '')))))
+                            result = make.make_server(argv[0], argv[1], argv[2], local_jar_mode, spigot_jar, installer_jar, bool(strtobool(argv[3].capitalize().replace('\n', ''))))
+                            print(str(i)+"番目のサーバー名は |||↓\n"+result[0])
                     else:
                         installer_jar = ""
                         spigot_jar = ""
@@ -69,8 +97,12 @@ class Autoer:
                             installer_jar = sys.argv[3]
                         else:
                             local_jar_mode = 0
-                        print("作成したサーバー名は |||↓\n"+make.make_server(sys.argv[2], sys.argv[3], sys.argv[4], local_jar_mode, spigot_jar, installer_jar, bool(strtobool(sys.argv[5].capitalize()))))
-                    print("Make Success")
+                        result = make.make_server(sys.argv[2], sys.argv[3], sys.argv[4], local_jar_mode, spigot_jar, installer_jar, bool(strtobool(sys.argv[5].capitalize())))
+                        print("作成したサーバー名は |||↓\n"+result[0])
+                    if result[1]:
+                        print("作成が正常に完了しました")
+                    else:
+                        print("作成が正常に完了しませんでした\nもう一度作成する必要があります。")
                     sys.exit(0)
                 elif sys.argv[1] == "-run":
                     java_argv = "nogui"
@@ -104,15 +136,14 @@ class Autoer:
         if ischeck:
             check.run_check()
         self.version = 1.4
-        self.editon = "pre-release"
+        self.editon = "release"
         if not self.is_version_new_autoer(str(self.version)):
             print("I:すでにこのバージョンよりも新しい、バージョンが出ています。\nくわしくは: https://github.com/stsaria/Autoer-1/releases\n")
-    
     def run_autoer(self):
-        if self.editon == "pre-release":
+        if "pre" in self.editon:
             print("*このプログラムは、リリース前最終確認版です*")
         """Autoerを実行する"""
-        print("Autoer-1\nVersion: "+str(self.version)+"-"+self.editon)
+        print("\nAutoer-1\nVersion: "+str(self.version)+"-"+self.editon)
         while True:
             mode = input("モードを選択してください\n作成モード[Make]\n管理モード[Control]\nソフトウェアを終了[Exit]\n[M,C,E]: ").lower()
             if mode in ["make", "mak", "ma", "m"]:

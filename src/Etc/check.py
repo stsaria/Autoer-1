@@ -87,10 +87,10 @@ def network(url):
         except_content= excep
     return active, global_ip, private_ip, except_content
 
-def run_check() -> None:
+def run_check(java_version_show=True) -> None:
     """チェックを実行する関数（起動時など）"""
     check_platform()
-    print("File", end="...")
+    #print("File", end="...")
     paths = ["data", "data/minecraft-list.txt", "data/minecraft-dir-list.txt", "minecraft"]
     attributes = ["dir", "file", "file", "dir"]
     for index in range(len(paths)):
@@ -104,28 +104,29 @@ def run_check() -> None:
                     file.close()
                 except OSError as execp:
                     except_print(execp, "", True)
-    print("OK")
-    print("NetWork", end="...")
+    #print("OK")
+    #print("NetWork", end="...")
     network_result = network("https://ifconfig.me")
     if not network_result[0]:
         print("Error")
         except_print(network_result[3], "ネットワークに問題があります。", True)
-    print("OK")
-    print("Java Path", end="...")
+    #print("OK")
+    #print("Java Path", end="...")
     if not shutil.which('java'):
-        print("Error")
+        #print("Error")
         print("Javaのパス（環境変数）が通っていません。")
         sys.exit(1)
-    print("OK")
+    #print("OK")
     # Download Json in MCversions
     if not os.path.exists("data/version.json"):
-        print("Download to Json", end="...")
+        #print("Download to Json", end="...")
         try:
             make.download_text("https://mcversions.net/mcversions.json", "data/version.json")
         except Exception as excep:
-            print("Error")
+            #print("Error")
             except_print(excep, "", True)
-        print("OK")
+        #print("OK")
 
-    print("Javaのバージョンは "+java_version()[1]+" です。")
-    print("All OK!\n")
+    if java_version_show:
+        print("Javaのバージョンは "+java_version()[1]+" です。")
+    #print("All OK!\n")
