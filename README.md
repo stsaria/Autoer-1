@@ -37,17 +37,30 @@
 [hoge@cp1 ~]$ ./Autoer -notcheck
 （ただし、この引数は他の引き数にかぶらなければ、どこにおいても問題なし）
 ```
+### ・Spigotのビルド
+#### コマンド
+```
+[hoge@cp1 ~]$ ./Autoer -spigot-build [server_version]
+```
+このように引数を与えさせます。<br>
+完了すると ```spigot-1.19.4.jar``` のようにJarファイルが生成されます。<br>
+作成モードとの、共存もできます。
+#### コマンド2
+```
+[hoge@cp1 ~]$ ./Autoer -make [server_name] [server_version or installer_jar or spigot,papermc_jar] [server_port] [eula(True, False)] [(任意)-forge -spigot] -spigot-build [server_version]
+```
+このようにもできます。
+
 ### ・作成する場合
 #### コマンド
 ```
-[hoge@cp1 ~]$ ./Autoer -make [server_name] [server_version] [server_port] [eula(True, False)]
+[hoge@cp1 ~]$ ./Autoer -make [server_name] [server_version or installer_jar or spigot,papermc_jar] [server_port] [eula(True, False)] [(任意)-forge -spigot]
 ```
-※ ただし、このモードで作成する場合は forgeやpapermc,spigotmc などには対応していません。
 ### ・作成する場合（ファイルで複数作成）
 #### ファイル
 // text.txt
 ```
-[server_name] [server_version] [server_port] [eula(True, False)]
+[server_name] [server_version or installer_jar or spigot,papermc_jar] [server_port] [eula(True, False)] [(任意)-forge -spigot]
 ```
 （改行で区切れば、**1コマンド**で複数作成することができます。）
 #### コマンド
