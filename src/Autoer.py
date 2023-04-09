@@ -138,7 +138,7 @@ class Autoer:
         self.version = 1.4
         self.editon = "release"
         if not self.is_version_new_autoer(str(self.version)):
-            print("I:すでにこのバージョンよりも新しい、バージョンが出ています。\nくわしくは: https://github.com/stsaria/Autoer-1/releases\n")
+            print("I:すでにこのバージョンよりも新しい、バージョンが出ています。\n詳しくは: https://github.com/stsaria/Autoer-1/releases\n")
     def run_autoer(self):
         if "pre" in self.editon:
             print("*このプログラムは、リリース前最終確認版です*")
